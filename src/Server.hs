@@ -4,14 +4,14 @@ module Server
     ( webApp
     ) where
 
-import Servant (Server, Proxy(..), (:<|>)(..), serve)
-import Network.Wai(Application)
-import Network.Wai.Handler.Warp(run)
-import Data.Text (Text)
-import Database.PostgreSQL.Simple (Connection)
+import           Data.Text (Text)
+import           Database.PostgreSQL.Simple (Connection)
+import           Network.Wai (Application)
+import           Network.Wai.Handler.Warp (run)
+import           Servant ((:<|>) (..), Proxy (..), Server, serve)
 
-import Router (UserAPI(..))
-import Handler (login, register, getUser)
+import           Handler (getUser, login, register)
+import           Router (UserAPI (..))
 
 server :: Connection -> Text-> Server UserAPI
 server conn authUrl =  login conn authUrl :<|> register conn authUrl :<|> getUser authUrl

@@ -2,14 +2,14 @@
 
 module Main where
 
-import Server (webApp)
-import Utils (toInt)
-import System.Environment (lookupEnv)
-import Data.Maybe  (fromMaybe)
-import Data.Text (Text, pack)
-import DB (connection)
-import Control.Exception (try, SomeException)
-import Database.PostgreSQL.Simple (Connection)
+import           Control.Exception (SomeException, try)
+import           Data.Maybe (fromMaybe)
+import           Data.Text (Text, pack)
+import           Database.PostgreSQL.Simple (Connection)
+import           DB (connection)
+import           Server (webApp)
+import           System.Environment (lookupEnv)
+import           Utils (toInt)
 
 
 
@@ -26,6 +26,6 @@ main = do
       dbString = fromMaybe "postgres://dbUser:dbPassword@localhost:5432/haskell-users" maybeDbString
   connResult <- try (connection $ pack dbString) :: IO (Either SomeException Connection)
   case connResult of
-    Left ex -> putStrLn $ "Exception caught : " ++ show ex
+    Left ex    -> putStrLn $ "Exception caught : " ++ show ex
     Right conn -> webApp (toInt port) conn $ pack auth
- 
+

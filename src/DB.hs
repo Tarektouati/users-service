@@ -1,10 +1,6 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE DataKinds, DuplicateRecordFields, OverloadedStrings, TypeOperators #-}
 
-module DB 
+module DB
         ( UserDB(..)
         , connection
         , findUserByEmail
@@ -12,25 +8,25 @@ module DB
         , toPublicUser
         )where
 
-import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.FromRow
-import Data.Int (Int64)
-import Data.Text (Text)
-import Types (User(..), PublicUser(..))
-import Data.Text.Encoding as TextE (encodeUtf8)
-import Data.UUID (UUID(..), toText)
+import           Data.Int (Int64)
+import           Data.Text (Text)
+import           Data.Text.Encoding as TextE (encodeUtf8)
+import           Data.UUID (UUID (..), toText)
+import           Database.PostgreSQL.Simple
+import           Database.PostgreSQL.Simple.FromRow
+import           Types (PublicUser (..), User (..))
 
 
 data UserDB = UserDB {
-  id :: UUID,
-  email :: Text,
+  id        :: UUID,
+  email     :: Text,
   firstName :: Text,
-  lastName:: Text,
-  password :: Text
+  lastName  :: Text,
+  password  :: Text
 }
 
 toPublicUser :: UserDB -> PublicUser
-toPublicUser UserDB{email=e,firstName=f,lastName=l,id=i} = 
+toPublicUser UserDB{email=e,firstName=f,lastName=l,id=i} =
   PublicUser{email=e,firstName=f,lastName=l,id=i}
 
 instance FromRow UserDB where
@@ -40,9 +36,9 @@ connection :: Text ->  IO Connection
 connection connString = connectPostgreSQL $ TextE.encodeUtf8 connString
 
 findUserByEmail :: Connection -> Text -> IO [UserDB]
-findUserByEmail c email = 
+findUserByEmail c email =
   query c "SELECT u.id, u.email, u.firstname, u.lastname, u.password FROM USERS as u  WHERE u.email = ?" [email]
-  
+
 saveUser :: Connection -> UserDB -> IO Int64
-saveUser c UserDB{email=e,firstName=f,lastName=l,password=p,id=i} = 
+saveUser c UserDB{email=e,firstName=f,lastName=l,password=p,id=i} =
   execute c "INSERT INTO USERS (email, firstname, lastname, password, id) VALUES (?,?,?,?,?)" [e,f,l,p, toText i]

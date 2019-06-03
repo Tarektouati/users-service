@@ -1,10 +1,6 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE DataKinds, DeriveGeneric, DuplicateRecordFields, OverloadedStrings, TypeOperators #-}
 
-module Types 
+module Types
           ( User(..)
           , Login(..)
           , Register(..)
@@ -14,24 +10,24 @@ module Types
           , UserBody(..)
           ) where
 
-import Data.Text (Text)
-import Data.UUID (UUID(..))
-import GHC.Generics(Generic)
-import Data.Aeson as A (ToJSON, FromJSON, encode, decode, Value(..))
+import           Data.Aeson as A (FromJSON, ToJSON, Value (..), decode, encode)
+import           Data.Text (Text)
+import           Data.UUID (UUID (..))
+import           GHC.Generics (Generic)
 
-data User = User { 
-  id :: UUID,
-  email :: Text,
+data User = User {
+  id        :: UUID,
+  email     :: Text,
   firstName :: Text,
-  lastName:: Text,
-  password :: Text
+  lastName  :: Text,
+  password  :: Text
 } deriving (Eq, Show, Generic)
 
 instance ToJSON User
 instance FromJSON User
 
-data Login = Login{ 
-  email :: Text,
+data Login = Login{
+  email    :: Text,
   password :: Text
 } deriving (Eq, Show, Generic)
 
@@ -39,38 +35,38 @@ instance ToJSON Login
 instance FromJSON Login
 
 
-data Register = Register{ 
-  email :: Text,
+data Register = Register{
+  email     :: Text,
   firstName :: Text,
-  lastName:: Text,
-  password :: Text
+  lastName  :: Text,
+  password  :: Text
 } deriving (Eq, Show, Generic)
 
 instance ToJSON Register
 instance FromJSON Register
 
 
-data Response = Response { 
+data Response = Response {
     message :: Text,
     success :: Bool,
-    token :: Maybe Text,
-    user :: Maybe PublicUser
+    token   :: Maybe Text,
+    user    :: Maybe PublicUser
   } deriving (Eq, Show, Generic)
 
 instance ToJSON Response
 instance FromJSON Response
 
-data PublicUser = PublicUser { 
-  id :: UUID,
-  email :: Text,
+data PublicUser = PublicUser {
+  id        :: UUID,
+  email     :: Text,
   firstName :: Text,
-  lastName:: Text
+  lastName  :: Text
 } deriving (Eq, Show, Generic)
 
 instance ToJSON PublicUser
 instance FromJSON PublicUser
 
-data TokenBody = TokenBody { 
+newtype TokenBody = TokenBody {
   user :: PublicUser
 } deriving (Eq, Show, Generic)
 
@@ -78,7 +74,7 @@ instance ToJSON TokenBody
 instance FromJSON TokenBody
 
 
-data UserBody = UserBody { 
+newtype UserBody = UserBody {
   jwt :: Text
 } deriving (Eq, Show, Generic)
 
