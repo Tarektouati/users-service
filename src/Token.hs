@@ -29,7 +29,6 @@ getUserRequest token endpoint =
   (HTTP.setRequestBodyJSON $ toUserBody token) authUrl
   where authUrl = buildAuthUrl endpoint "POST" "/verify"
 
-
 toTokenBody :: PublicUser -> TokenBody
 toTokenBody pUser = TokenBody{user=pUser}
 

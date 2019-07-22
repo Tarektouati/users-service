@@ -30,6 +30,7 @@ dependencies:
   - bcrypt
   - http-client
   - http-conduit
+  - wai-logger
   - uuid
   - time
   - text
