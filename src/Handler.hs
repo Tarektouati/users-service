@@ -20,7 +20,7 @@ import           Utils (zero64)
 
 
 -- Login Handler
-login :: PG.Connection -> Text->  Login -> Handler Types.Response
+login :: PG.Connection -> Text->  Login -> Handler Response
 login c authUrl Login{email=e, password=p} = do
   users <- liftIO $ DB.findUserByEmail c e
   if null users
@@ -33,15 +33,15 @@ login c authUrl Login{email=e, password=p} = do
                 let publicUser = toPublicUser user
                 let request = getTokenRequest publicUser authUrl
                 response <- HTTP.httpJSON request
-                let authResp = HTTP.getResponseBody response :: Types.Response
-                return $ Types.Response "User LoggedIn" True (token authResp) $ Just publicUser
+                let authResp = HTTP.getResponseBody response :: Response
+                return $ Response "User LoggedIn" True (token authResp) $ Just publicUser
               else throwError $ err500 { errBody = "User not found" }
 
 -- Register Handler
 register :: PG.Connection -> Text->  Register -> Handler Types.Response
 register c authUrl Register{email=e,firstName=f,lastName=l,password=p} = do
   users <- liftIO $ DB.findUserByEmail c e
-  if null users
+  if  not $ null users
     then  throwError $ err500 { errBody = "Email already used" }
     else do
       passwordHash <- liftIO $ hashPassword p
